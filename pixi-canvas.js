@@ -40,71 +40,77 @@
         this._fillStyle = "#000";
         this._strokeStyle = "#000";
 
-        Object.defineProperty(this, "font", {
-            get: function () {
-                // TODO: v4
-                return this.text._style.font;
-            },
-            set: function (value) {
-                this.text._style.font = value;
-            }
-        });
-        Object.defineProperty(this, "textAlign", {
-            get: function () {
-                return this.text._style.align;
-            },
-            set: function (value) {
-                this.text._style.align = value;
-            }
-        });
-        Object.defineProperty(this, "textBaseline", {
-            get: function () {
-                return this.text._style.textBaseline;
-            },
-            set: function (value) {
-                this.text._style.textBaseline = value;
-            }
-        });
-        Object.defineProperty(this, "fillStyle", {
-            get: function () {
-                return this._fillStyle;
-            },
-            set: function (value) {
-                this.fillStyleColor = getColor(value);
-                this._fillStyle = value;
-            }
-        });
-        Object.defineProperty(this, "strokeStyle", {
-            get: function () {
-                return this._strokeStyle;
-            },
-            set: function (value) {
-                this.strokeStyleColor = getColor(value);
-                this._strokeStyle = value;
-            }
-        });
-        Object.defineProperty(this, "globalCompositeOperation", {
-            get: function () {
-                return this._globalCompositeOperation;
-            },
-            set: function (value) {
-                var gl = this.renderer.gl;
-                this._globalCompositeOperation = value;
-
-                this.flush();
-                if (value === 'source-out') {
-                    gl.blendFunc(gl.ONE_MINUS_DST_ALPHA, gl.ZERO);
-                } else if (value === 'source-in') {
-                    gl.blendFunc(gl.DST_ALPHA, gl.ZERO);
-                } else if (value === 'destination-out') {
-                    gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);
-                } else if (value === 'destination-in') {
-                    gl.blendFunc(gl.ZERO, gl.SRC_ALPHA);
-                } else {
-                    // source-over
-                    gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+        Object.defineProperties(this, {
+            font: {
+                get: function () {
+                    // TODO: v4
+                    return this.text._style.font;
+                },
+                set: function (value) {
+                    this.text._style.font = value;
                 }
-                this.start();
+            },
+            textAlign: {
+                get: function () {
+                    return this.text._style.align;
+                },
+                set: function (value) {
+                    this.text._style.align = value;
+                }
+            },
+            textBaseline: {
+                get: function () {
+                    return this.text._style.textBaseline;
+                },
+                set: function (value) {
+                    this.text._style.textBaseline = value;
+                }
+            },
+            fillStyle: {
+                get: function () {
+                    return this._fillStyle;
+                },
+                set: function (value) {
+                    this.fillStyleColor = getColor(value);
+                    this._fillStyle = value;
+                }
+            },
+            strokeStyle: {
+                get: function () {
+                    return this._strokeStyle;
+                },
+                set: function (value) {
+                    this.strokeStyleColor = getColor(value);
+                    this._strokeStyle = value;
+                }
+            },
+            globalCompositeOperation: {
+                get: function () {
+                    return this._globalCompositeOperation;
+                },
+                set: function (value) {
+                    var gl = this.renderer.gl;
+                    if (this._globalCompositeOperation === value) {
+                        // no need to change anything
+                        return;
+                    }
+                    this._globalCompositeOperation = value;
+
+                    this.flush();
+                    if (value === 'source-out') {
+                        gl.blendFunc(gl.ONE_MINUS_DST_ALPHA, gl.ZERO);
+                    } else if (value === 'source-in') {
+                        gl.blendFunc(gl.DST_ALPHA, gl.ZERO);
+                    } else if (value === 'destination-out') {
+                        gl.blendFunc(gl.ZERO, gl.ONE_MINUS_SRC_ALPHA);
+                    } else if (value === 'destination-in') {
+                        gl.blendFunc(gl.ZERO, gl.SRC_ALPHA);
+                    } else {
+                        // source-over
+                        gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
+                    }
+                    this.start();
+                }
             }
         });
 
@@ -134,7 +140,7 @@
         this.text = new PIXI.Text("");
         this.width = canvas.width;
         this.height = canvas.height;
-        this.spritePool = new SpritePool(1000);
+        this.spritePool = new SpritePool(2000);
     };
 
     // start and flush: needed for webgl
@@ -261,14 +267,14 @@
             sprite.calculateVertices();
         } else {
             texture = image.frame;
-            rectangle = texture.frame;
+            rectangle = texture._frame;
             rectangle.x = sx;
             rectangle.y = sy;
             rectangle.width = sw;
             rectangle.height = sh;
             texture._updateUvs();
             sprite._texture = texture;
-                        
+
             sprite.worldTransform = this.currentTransform;
             sprite.worldAlpha = this.globalAlpha;
         }
@@ -281,6 +287,12 @@
         this.translate(-x, -y);
         this.scale(sw / w, sh / h);
         // this.restore();
+
+        // did the spriteRenderer flush in the meantime?
+        if (this.spriteRenderer.currentBatchSize === 0) {
+            // the spritepool can be reset as well then
+            this.spritePool.reset();
+        }
     };
 
     // rectangles
@@ -622,7 +634,7 @@
                 return getContext.call(this, name);
             }
         };
-        
+
         // pixi v4?
         if (pixiVersion === 4) {
             console.log('WARNING: Pixi v4 detected, v3 is recommended!');
