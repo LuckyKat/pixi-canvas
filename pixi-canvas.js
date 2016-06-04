@@ -247,18 +247,19 @@
 
         // v4 transform property + calculateVertices method
         if (pixiVersion === 4) {
-            // rectangle = new PIXI.Rectangle(sx, sy, sw, sh);
-            // texture = new PIXI.Texture(image.texture, rectangle);
-            // texture._updateUvs();
-            // sprite = new PIXI.Sprite(texture);
-
             // bugged!!
-            texture = image.frame;
-            rectangle = texture.frame;
-            rectangle.x = sx;
-            rectangle.y = sy;
-            rectangle.width = sw;
-            rectangle.height = sh;
+            // texture = image.frame;
+            // rectangle = texture.frame;
+            // rectangle.x = sx;
+            // rectangle.y = sy;
+            // rectangle.width = sw;
+            // rectangle.height = sh;
+            // texture._updateUvs();
+
+            // make a new rectangle and texture...
+            rectangle = new PIXI.Rectangle(sx, sy, sw, sh);
+            texture = new PIXI.Texture(image.texture, rectangle);
+            
             texture._updateUvs();
             sprite._texture = texture;
 
@@ -625,6 +626,11 @@
             console.log('WARNING: PIXI library could not be found.');
             return;
         }
+        // pixi verson check
+        if (pixiVersion === 2) {
+            console.log('WARNING: Please use pixi v3 or v4');
+            return;
+        }
         // overwrite getContext function to add pixi as context option
         HTMLCanvasElement.prototype.getContext = function (name) {
             if (name === 'pixi') {
@@ -634,11 +640,6 @@
                 return getContext.call(this, name);
             }
         };
-
-        // pixi v4?
-        if (pixiVersion === 4) {
-            console.log('WARNING: Pixi v4 detected, v3 is recommended!');
-        }
     };
 
     init();
