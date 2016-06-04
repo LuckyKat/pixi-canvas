@@ -628,8 +628,10 @@
         }
         // pixi verson check
         if (pixiVersion === 2) {
-            console.log('WARNING: Please use pixi v3 or v4');
+            console.log('WARNING: Please use pixi v3');
             return;
+        } else if (pixiVersion === 4) {
+            console.log('WARNING: Pixi v4 detected, v3 is recommended (not all features are implemented for v4)');
         }
         // overwrite getContext function to add pixi as context option
         HTMLCanvasElement.prototype.getContext = function (name) {
