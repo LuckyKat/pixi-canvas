@@ -26,4 +26,13 @@ Not all canvas functions were ported. Most notably:
 
 Currently Pixi v3 is supported, v4 works partially.
 
+## To do:
+
+* Implement remaining API functions
+* Add Pixi v4 support
+* Improve performance
+* Clean up repo, move the bunnymark test, replace the borrowed pixi bunny sprite
+* Wrap in CommonJS/AMD module (???)
+
+
 Help implementing the remaining CanvasRenderingContext2D, porting to Pixi v4 and improving general perfomance would be appreciated!
