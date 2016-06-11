@@ -4,7 +4,6 @@
     var context = canvas.getContext("pixi");
 
     var start = function () {
-        // note: spawn context AFTER resizing canvas
         // make bunnies
         var i;
         for (i = 0; i < 5; ++i) {
