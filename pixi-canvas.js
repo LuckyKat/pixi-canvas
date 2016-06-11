@@ -1,5 +1,5 @@
 (function () {
-    var pixiVersion = parseInt(PIXI.VERSION);
+    var pixiVersion;
     var SpritePool = function (initialSize) {
         var i;
         // initialize        
@@ -627,6 +627,7 @@
             return;
         }
         // pixi verson check
+        pixiVersion = parseInt(window.PIXI.VERSION);
         if (pixiVersion === 2) {
             console.log('WARNING: Please use pixi v3');
             return;
