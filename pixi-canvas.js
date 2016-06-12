@@ -116,6 +116,7 @@
 
         // PixiContext stuff
         this.matrixStack = [];
+        this.alphaStack = [];
         this.fillStyleColor = {
             color: 0x000000,
             alpha: 1
@@ -200,9 +201,11 @@
     };
     PixiContext.prototype.save = function () {
         this.matrixStack.push(this.currentTransform.clone());
+        this.alphaStack.push(this.globalAlpha);
     };
     PixiContext.prototype.restore = function () {
         this.currentTransform = this.matrixStack.pop();
+        this.globalAlpha = this.alphaStack.pop();
     };
 
     // draw image
