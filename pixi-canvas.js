@@ -142,6 +142,11 @@
         this.width = canvas.width;
         this.height = canvas.height;
         this.spritePool = new SpritePool(2000);
+        this.fakeParent = {
+            worldTransform: null,
+            worldAlpha: 1,
+            children: []
+        };
     };
 
     // start and flush: needed for webgl
@@ -262,7 +267,7 @@
             // make a new rectangle and texture...
             rectangle = new PIXI.Rectangle(sx, sy, sw, sh);
             texture = new PIXI.Texture(image.texture, rectangle);
-            
+
             texture._updateUvs();
             sprite._texture = texture;
 
@@ -408,6 +413,24 @@
 
         this.renderer.setObjectRenderer(this.graphicsRenderer);
         this.graphicsRenderer.render(this.graphics);
+    };
+
+    /**
+     * Bonus feature: draws any Pixi displayObject
+     */
+    PixiContext.prototype.drawPixi = function (displayObject) {
+        // trick the renderer by setting our own parent
+        var transformObject = this.fakeParent;
+        var oldParent = displayObject.parent;
+        transformObject.worldTransform = this.currentTransform;
+        transformObject.worldAlpha = this.globalAlpha;
+
+        displayObject.parent = transformObject;
+        displayObject.updateTransform();
+        displayObject.renderWebGL(this.renderer);
+        
+        // reset
+        displayObject.parent = oldParent;
     };
 
     // not sure what to do with these
