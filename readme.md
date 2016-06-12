@@ -28,6 +28,24 @@ context.drawImage(otherCanvas, x, y);
 
 Pixi-canvas converts the source image (otherCanvas) to a PIXI.BaseTexture and saves it as a property called ```texture``` and does that only once. If you update the otherCanvas by drawing on it again, the texture will not be updated! You can force a new texture by setting ```otherCanvas.texture = null;```
 
+## Bonus feature: context.drawPixi()
+
+If you like Pixi's features, but don't want to be bound by Pixi's state, no worries! Pixi-canvas has a special function called drawPixi(). With this function you can draw any PIXI.displayObject (that includes Sprites), while the displayObject still respects the context's transformations using context.scale, context.rotate and context.translate. With this you can use filters for example. Example:
+
+```
+// spawn a pixi sprite (for more instructions, see pixi's website)
+var pixiSprite = new PIXI.Sprite(texture);
+
+// do stuff with the sprite, like add filters, or use it as container etc.
+// whatever you want!
+pixiSprite.filters = [new PIXI.filters.BlurFilter()];
+pixiSprite.addChild(otherSprite);
+
+// to draw the sprite, use drawPixi!
+context.drawPixi(otherSprite);
+
+```
+
 ## Unsupported features
 
 Not all canvas functions were ported. Most notably:
