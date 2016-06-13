@@ -42,7 +42,7 @@ pixiSprite.filters = [new PIXI.filters.BlurFilter()];
 pixiSprite.addChild(otherSprite);
 
 // to draw the sprite, use drawPixi!
-context.drawPixi(otherSprite);
+context.drawPixi(pixiSprite);
 
 ```
 
