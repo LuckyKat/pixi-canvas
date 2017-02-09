@@ -319,7 +319,7 @@
         this.renderer.setObjectRenderer(this.graphicsRenderer);
         this.graphicsRenderer.render(graphics);
     };
-    PixiContext.prototype.strokeRect = function () {
+    PixiContext.prototype.strokeRect = function (x, y, w, h) {
         var graphics = new PIXI.Graphics();
         graphics.worldTransform = this.currentTransform;
         graphics.worldAlpha = this.globalAlpha;
